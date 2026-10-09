@@ -32,10 +32,13 @@ Rule: keep the core together; split out the parts that depend on outside systems
 
 ## Commands
 
-Fill these in as each piece is built.
+Core app (run from `services/core`, Windows PowerShell):
 
-- Run tests: _TBD_ (planned: `pytest` from each service folder)
-- Run locally: _TBD_ (planned: `docker compose up`)
+- First-time setup: `python -m venv .venv` then `.\.venv\Scripts\python.exe -m pip install -e ".[dev]"`
+- Activate the venv: `.\.venv\Scripts\Activate.ps1`
+- Run tests: `pytest`
+- Run the app: `uvicorn app.main:app --reload` (then open http://127.0.0.1:8000/health or http://127.0.0.1:8000/docs)
+- Docker: _TBD_ (planned: `docker compose up`)
 
 ## Rules
 
