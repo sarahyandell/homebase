@@ -22,6 +22,7 @@ See [docs/decisions/0001-service-boundaries.md](docs/decisions/0001-service-boun
 - Tasks: Everyday task tracker in the form of a checklist with due dates, including dependencies as well as a next step view that shows only the tasks you can start now.
 - Cases/Applications: Can be used for longer term things such as following the visa application process and job applications, linked to tasks as it will have tasks associated with the case
 - Reminders: General date reminders in regards to birthdays etc but also to send notifications when something is due or overdue. Different levels of reminders- so gentle nudge vs an alarm.
+  - "Still needed?" check: only a task's title is required, so tasks can be captured quickly. If a task is created without a due date or an assigned family member, a reminder is sent one week after it was created asking if it is still needed. This stops random tasks being added and then sinking to the bottom of the pile. (Uses each task's `created_at`, and needs a `task.created` event that Reminders listens for.)
 - Household: keep track of general household things like bills, subscriptions and renewals.
 
 ## Ideas / later
