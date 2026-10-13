@@ -1,4 +1,7 @@
 # homebase
+
+[![CI](https://github.com/sarahyandell/homebase/actions/workflows/ci.yml/badge.svg)](https://github.com/sarahyandell/homebase/actions/workflows/ci.yml)
+
 Event-driven household and relocation platform: tasks, long-running cases, reminders and bills, built as a core Python app with event-driven edge services, Docker, CI and Terraform.
 
 
@@ -30,8 +33,9 @@ See [docs/decisions/0001-service-boundaries.md](docs/decisions/0001-service-boun
 
 ## Status
 
-Early stages, repo set up including project outline.
-Task services next.
+Early stages. The core app runs with a health endpoint and the first part of the Tasks module: a task model with validation and a REST API to create, list and complete tasks, covered by pytest and run in CI on every push and pull request.
+
+Next: task dependencies and the next-step view, then Docker Compose for local running.
 
 ## Data note
 All of the data in this repo is synthetic, no real data is stored here.
