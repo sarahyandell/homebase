@@ -52,7 +52,7 @@ Due to time, budget and developer constraints for the moment this is left out.
 
 ### How the parts link and talk
 
-- **Cases and tasks:** A task will store the case ID, and when tasks are closed that relate to a case, the relevant case status will be updated.
+- **Cases and tasks:** A task will store the case ID and the case stage it relates to. The case tasks are created through cases which checks the stage. Dependencies go one way, cases use tasks but tasks never call cases. 
 - **Inside the core app:** each module owns its own tables. Modules don't read each other's tables directly; they go through each other's code interfaces.
 - **Between the core app and edge services:** services publish events when something happens (task created, deadline passed etc.) through a message queue. Other services listen and react (when a new task is created, a relevant reminder may be set).
 - Each edge service has its own data. No service reads another service's database.
