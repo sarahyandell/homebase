@@ -19,7 +19,7 @@ Rule: keep the core together; split out the parts that depend on outside systems
 | Integration service | `services/integration` | Reads payment emails/bank data, publishes `payment.detected` | Idea / later |
 
 - Inside the core app, each module owns its own tables and other modules use its code interface, never its tables directly.
-- A task stores its `case_id`; Cases updates its status when related tasks close.
+- A task stores its `case_id` and `case_stage_id`; case tasks are created through Cases, which validates the stage. Stages change only when you confirm a suggestion or move them manually; readiness is derived from the stage's tasks when the case is read.
 - The core app and edge services talk only through events on a queue (e.g. `task.completed`, `task.due_soon`, `case.stage_changed`, `bill.due_soon`). No service reads another's database.
 
 ## Stack
