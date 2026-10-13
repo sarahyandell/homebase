@@ -23,7 +23,7 @@ To keep it simple and concise, the idea is to iterate on it but start with an MV
 
 **Core app** (one app, separate modules):
 - **Tasks:** Individual small/simple tasks that can but don't need to be grouped by cases.
-- **Cases:** Applications for things like jobs/visas, any longer term goal or piece of work that may have multiple stages to keep track on.
+- **Cases:** Applications for things like jobs/visas, any longer term goal or piece of work that may have multiple stages to keep track of.
 - **Household:** Bills, registrations, anything to do with household maintenance etc.
 
 **Edge services** (separate apps):
@@ -36,13 +36,13 @@ To keep it simple and concise, the idea is to iterate on it but start with an MV
 A case is a longer term goal, objective or application. It can be made up of many tasks, but is used to keep track of key applications etc.
 
 **Why is Household a separate module?**
-It is separate so there can be two separate sections and purposes for this project. One is Moving to Melbourne and then the other is household which can be used more long term. Alongside this the data is different: bills repeat (monthly, yearly) and have amounts and renewal dates, while tasks happen once.
+It is separate so there can be two separate sections and purposes for this project. One is moving to Melbourne and then the other is household which can be used more long term. Alongside this the data is different: bills repeat (monthly, yearly) and have amounts and renewal dates, while tasks happen once.
 
 **Why are Tasks, Cases and Household in one app?**
 They only depend on their own data and are closely linked (cases are made up of tasks), so they are likely to change together. Separate deployments would add setup without a real benefit at this scale.
 
 **Why is Reminders a separate service?**
-You may have reminders set for different things not related to tasks, as well as tasks, cases and bills all need reminders, so keeping them in one place means none of the other parts has to handle notifications. It also has a different failure profile: it runs in the background, depends on outside email/push providers, and can retry later. If a provider is down, the core app should keep working and reminders should catch up from the queue.
+You may have reminders set for different things not related to tasks. Tasks, cases and bills all need reminders, so keeping them in one place means none of the other parts has to handle notifications. It also has a different failure profile: it runs in the background, depends on outside email/push providers, and can retry later. If a provider is down, the core app should keep working and reminders should catch up from the queue.
 
 **Why will Integration be a separate service?**
 Like Reminders, it depends on unreliable outside systems (Gmail, bank APIs). It turns their messy data into a standard `payment.detected` event, so Household never needs to know about email formats or bank APIs (an anti-corruption layer).
@@ -52,7 +52,7 @@ Due to time, budget and developer constraints for the moment this is left out.
 
 ### How the parts link and talk
 
-- **Cases and tasks:** A task will store the case ID, and when tasks are closed that relate to a case, the relevant case status will be updated.
+- **Cases and tasks:** A task will store the case ID and the case stage it relates to. The case tasks are created through cases which checks the stage. Dependencies go one way, cases use tasks but tasks never call cases. 
 - **Inside the core app:** each module owns its own tables. Modules don't read each other's tables directly; they go through each other's code interfaces.
 - **Between the core app and edge services:** services publish events when something happens (task created, deadline passed etc.) through a message queue. Other services listen and react (when a new task is created, a relevant reminder may be set).
 - Each edge service has its own data. No service reads another service's database.
@@ -63,10 +63,10 @@ Due to time, budget and developer constraints for the moment this is left out.
 This would be simpler, with one database as well, but I want to challenge myself a bit. Without clear boundaries, messy outside data and notification code would sit in the same code as the core logic.
 
 **A modular monolith (one app, all four parts as modules)**
-I decided not to put the reminders in the app and keep it separate as this functions differently to the other modules. When the other modules are tested or fail, we will know instantly as it happens instantly whereas reminders will be when I am not necessarily actively on the app or when it is running in the background. Alongside this the reminders will be connected externally, depending on the way we want the reminders to work, so this also keeps the internal data separate from any outside connection. 
+I decided not to put the reminders in the app and keep it separate as this functions differently to the other modules. When the other modules are tested or fail, we will know instantly as it happens instantly whereas reminders will be when I am not necessarily actively on the app or when it is running in the background. Alongside this the reminders will be connected externally, depending on the way we want the reminders to work, so this also keeps the internal data separate from any outside connection. I will ideally keep this setup with any new external connections going forward- connecting them separately rather than through the modules. 
 
 **Four separate services from day one**
-This was also considered as would be good learning experience but it was decided based off time constraints and unnecessary complexity that I would not follow this route. 
+This was also considered as it would be a good learning experience but it was decided based off time constraints and unnecessary complexity that I would not follow this route. Alongside this Tasks, Cases and Household only depend on their own data and change together so it would add layers of setup without much benefit. 
 
 ## Consequences
 
